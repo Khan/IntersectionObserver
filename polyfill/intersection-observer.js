@@ -7,18 +7,20 @@
  *
  */
 
-window.__polyfillIntersectionObserver = function(options) {
-  if (!options) {
-    options = {force: false};
-  }
-
-  (function(window, document) {
+(function(window, document) {
   'use strict';
 
+  // HACK(mdr): We're disabling the native IntersectionObserver for Edge,
+  // because IntersectionObserver isn't behaving as expected in GTP
+  // passages. We're finding that `intersectionRatio` is sometimes 0 when
+  // it seems like it should be 1, and 1 when it seems like it should be
+  // 0. Rather than investigating in depth, we're just telling Edge to use
+  // the less performant polyfill for now. (TP-2263)
+  var browserIsEdge = navigator.userAgent.indexOf("Edge") >= 0;
 
   // Exits early if all IntersectionObserver and IntersectionObserverEntry
   // features are natively supported.
-  if (!options.force &&
+  if (!browserIsEdge &&
       'IntersectionObserver' in window &&
       'IntersectionObserverEntry' in window &&
       'intersectionRatio' in window.IntersectionObserverEntry.prototype) {
@@ -35,7 +37,6 @@ window.__polyfillIntersectionObserver = function(options) {
     }
     return;
   }
-
 
   /**
    * An IntersectionObserver registry. This registry exists to hold a strong
@@ -728,4 +729,3 @@ window.__polyfillIntersectionObserver = function(options) {
   window.IntersectionObserverEntry = IntersectionObserverEntry;
 
   }(window, document));
-};

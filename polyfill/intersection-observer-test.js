@@ -11,8 +11,6 @@
 // Sets the timeout to three times the poll interval to ensure all updates
 // happen (especially in slower browsers). Native implementations get the
 // standard 100ms timeout defined in the spec.
-window.__polyfillIntersectionObserver();
-
 var ASYNC_TIMEOUT = IntersectionObserver.prototype.THROTTLE_TIMEOUT * 3 || 100;
 
 
